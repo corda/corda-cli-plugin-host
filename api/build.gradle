@@ -1,6 +1,7 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm'
     id 'maven-publish'
+    id 'com.jfrog.artifactory'
 }
 
 dependencies {
@@ -12,8 +13,25 @@ dependencies {
 publishing {
     publications {
         cliapi(MavenPublication){
+
+            artifactId = 'corda-cli-api'
+            groupId = 'net.corda.cli'
+
             from components.kotlin
-            artifactId 'corda-cli-api'
+        }
+    }
+}
+artifactory {
+    setContextUrl("https://software.r3.com/artifactory")
+    publish {
+        repository {
+            repoKey = "corda-cli-api"
+            username = System.getenv('CORDA_ARTIFACTORY_USERNAME') ?: System.getProperty("corda.artifactory.username")
+            password = System.getenv('CORDA_ARTIFACTORY_PASSWORD') ?: System.getProperty("corda.artifactory.password")
+        }
+
+        defaults {
+            publications ('ALL_PUBLICATIONS')
         }
     }
 }
