@@ -1,17 +1,18 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' 
+    id 'org.jetbrains.kotlin.jvm'
     id 'application'
     id 'com.r3.internal.gradle.plugins.r3Publish'
 }
 
 dependencies {
     implementation project(":api")
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-    implementation "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
+
+    api "info.picocli:picocli:${picoCliVersion}"
+
+    implementation "org.slf4j:slf4j-log4j12:$slf4jVersion"
     implementation "org.slf4j:slf4j-api:$slf4jVersion"
     implementation "org.pf4j:pf4j:${pf4jVersion}"
     implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
-    api "info.picocli:picocli:${picoCliVersion}"
     implementation "org.yaml:snakeyaml:${snakeyamlVersion}"
     implementation "com.github.kittinunf.fuel:fuel:${fuelVersion}"
     implementation "com.github.kittinunf.fuel:fuel-json:${fuelVersion}"
@@ -32,8 +33,8 @@ application {
     mainClass = appMainClass
 }
 
-tasks.named("run"){
-    doFirst{
+tasks.named("run") {
+    doFirst {
         systemProperty "pf4j.pluginsDir", file(pluginsDir).absolutePath
     }
 }
@@ -63,4 +64,11 @@ def fatJar = tasks.register('fatJar', Jar) {
 
 artifacts {
     archives fatJar
+}
+
+repositories {
+    maven {
+        url 'https://repo.maven.apache.org/maven2'
+        name 'Maven Central'
+    }
 }

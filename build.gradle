@@ -5,7 +5,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' apply false
     id 'base'
     id 'io.gitlab.arturbosch.detekt' apply false
-    id 'jacoco' // test coverage
+    id 'jacoco'
     id 'maven-publish'
     id 'com.r3.internal.gradle.plugins.r3ArtifactoryPublish'
 }
@@ -16,9 +16,8 @@ subprojects {
     group = 'net.corda.cli'
     version = '0.0.1-beta'
 
-    pluginManager.withPlugin('org.jetbrains.kotlin.jvm'){
+    pluginManager.withPlugin('org.jetbrains.kotlin.jvm') {
         apply plugin: 'io.gitlab.arturbosch.detekt'
-
 
         dependencies {
             detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:$detektPluginVersion"
@@ -32,8 +31,8 @@ subprojects {
             verbose = true
             jvmTarget = VERSION_11
             freeCompilerArgs += [
-                "-Xjvm-default=all",
-                "-java-parameters"
+                    "-Xjvm-default=all",
+                    "-java-parameters"
             ]
         }
     }
@@ -74,5 +73,5 @@ subprojects {
 wrapper {
     gradleVersion = '7.3.2'
     distributionType = Wrapper.DistributionType.BIN
-    distributionUrl="https://gradleproxy:gradleproxy@software.r3.com/artifactory/gradle-proxy/gradle-$gradleVersion-bin.zip"
+    distributionUrl = "https://gradleproxy:gradleproxy@software.r3.com/artifactory/gradle-proxy/gradle-$gradleVersion-bin.zip"
 }
