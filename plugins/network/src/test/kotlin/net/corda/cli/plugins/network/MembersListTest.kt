@@ -68,7 +68,6 @@ class MembersListTest {
                 "-ou=Bob"
             )
         }.apply {
-            println(this)
             assertTrue(contains("$URL/members/$DUMMY_HOLDING_IDENTITY_ID?ou=Bob&l=London&st=LN&c=GB"))
         }
     }
