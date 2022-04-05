@@ -34,6 +34,7 @@ class NetworkPluginWrapper(wrapper: PluginWrapper) : Plugin(wrapper) {
         @Mixin
         override lateinit var service: HttpService
 
+        @Suppress("LongParameterList")
         @CommandLine.Command(
             name = "members-list",
             description = ["Shows the list of members on the network."]
