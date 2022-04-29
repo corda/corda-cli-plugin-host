@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # get path to script
-SCRIPT=$(readlink -f "$0")
+SCRIPT=$(readlink "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 
 rootDir="$SCRIPTPATH/.."
