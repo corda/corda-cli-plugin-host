@@ -6,6 +6,8 @@ plugins {
 dependencies {
     compileOnly project(":api")
 
+    implementation "net.corda:corda-packaging:${cordaRuntimeVersion}"
+    implementation "net.corda:corda-packaging-verify:${cordaRuntimeVersion}"
     implementation "org.pf4j:pf4j:${pf4jVersion}"
     kapt "org.pf4j:pf4j:${pf4jVersion}"
 

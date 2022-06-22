@@ -68,6 +68,8 @@ plugins {
 
 dependencyResolutionManagement {
     repositories {
+        mavenLocal()
+
         mavenCentral()
 
         def cordaUseCache = System.getenv("CORDA_USE_CACHE")
