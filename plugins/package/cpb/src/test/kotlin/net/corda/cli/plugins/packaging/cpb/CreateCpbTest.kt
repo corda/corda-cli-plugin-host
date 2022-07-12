@@ -10,6 +10,7 @@ import java.util.jar.JarInputStream
 import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -20,6 +21,26 @@ class CreateCpbTest {
     lateinit var tempDir: Path
 
     val createCpb = CreateCpb()
+
+    companion object {
+        private fun checkCpbContainsEntries(cpb: Path, expectedEntries: List<String>) {
+            JarInputStream(Files.newInputStream(cpb)).use {
+                assertTrue(it.manifest.mainAttributes.isNotEmpty())
+                assertTrue(it.manifest.mainAttributes[Attributes.Name("Corda-CPB-Format")] == "2.0")
+                assertTrue(it.manifest.mainAttributes[Attributes.Name("Corda-CPB-Upgrade")] == false.toString())
+                val jarEntries = mutableListOf<ZipEntry>()
+
+                var jarEntry: JarEntry? = it.nextJarEntry
+                while (jarEntry != null) {
+                    jarEntries.add(jarEntry)
+                    jarEntry = it.nextJarEntry
+                }
+                assertThat(jarEntries.map { it.name }).containsExactlyInAnyOrderElementsOf(
+                    expectedEntries.map { Path.of(it).fileName.toString() }
+                )
+            }
+        }
+    }
 
     private fun buildTestCpk(jars: List<String>): Path {
         val cpkName = Path.of(tempDir.toString(), "${UUID.randomUUID()}.cpk")
@@ -35,7 +56,7 @@ class CreateCpbTest {
     }
 
     @Test
-    fun `packCpksIntoCpb packs CPKs into CPB`() {
+    fun `packCpksToUnsignedCpb packs CPKs into CPB`() {
         val cpk0 = buildTestCpk(
             listOf(
                 "lib/cpk0-lib.jar",
@@ -60,33 +81,21 @@ class CreateCpbTest {
         )
     }
 
-    private fun checkCpbContainsEntries(cpb: Path, expectedEntries: List<String>) {
-        JarInputStream(Files.newInputStream(cpb)).use {
-            assertTrue(it.manifest.mainAttributes.isNotEmpty())
-            assertTrue(it.manifest.mainAttributes[Attributes.Name("Corda-CPB-Format")] == "2.0")
-            assertTrue(it.manifest.mainAttributes[Attributes.Name("Corda-CPB-Upgrade")] == false.toString())
-            val jarEntries = mutableListOf<ZipEntry>()
-
-            var jarEntry: JarEntry? = it.nextJarEntry
-            while (jarEntry != null) {
-                jarEntries.add(jarEntry)
-                jarEntry = it.nextJarEntry
-            }
-            assertThat(jarEntries.map { it.name }).containsExactlyInAnyOrderElementsOf(
-                expectedEntries.map { Path.of(it).fileName.toString() }
+    @Test
+    fun `packCpksToUnsignedCpb throws if CPK is missing`() {
+        val cpk0 = buildTestCpk(
+            listOf(
+                "lib/cpk0-lib.jar",
+                "main-bundle0.jar"
             )
+        )
+        val missingCpk = Path.of("missing.cpk")
+
+        assertThrows(IllegalArgumentException::class.java) {
+            createCpb.packCpksToUnsignedCpb(sequenceOf(cpk0.toString(), missingCpk.toString()), false)
         }
     }
 
-//    @Test
-//    fun `packCpksIntoCpb throws if CPK is missing`() {
-//        val testCpk0 =  buildTestCpk()
-//        val missingCpk = Path.of("missing.cpk")
-//
-//        packCpksIntoCpb()
-//
-//        println(testCpk)
-//    }
 
     @Test
     fun `adds META-INF folder`() {
@@ -97,5 +106,4 @@ class CreateCpbTest {
 //    fun ``() {
 //
 //    }
-
 }
