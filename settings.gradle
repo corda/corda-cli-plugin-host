@@ -109,9 +109,9 @@ include 'plugins'
 include 'plugins:mgm'
 include 'plugins:network'
 include 'plugins:package'
+include 'plugins:package:cpb'
 include 'plugins:plugin1'
 include 'plugins:plugin2'
-
 
 
 gradleEnterprise {
