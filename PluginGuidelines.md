@@ -10,7 +10,7 @@ There are a few guidelines that must be followed when writing a plugin for the p
 ## Plugin Location
 
 Develop plugins in the [corda-runtime-os](https://github.com/corda/corda-runtime-os) repository under the `tools:plugins:` module.
-Under this module please create a new module for your plugin, and add it to `settings.gradle` in the project root.
+Under this module create a new module for your plugin, and add it to `settings.gradle` in the project root.
 
 
 ## Starting With Gradle
