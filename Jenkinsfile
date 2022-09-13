@@ -1,9 +1,10 @@
-@Library('corda-shared-build-pipeline-steps@5.0') _
+@Library('corda-shared-build-pipeline-steps@DP2') _
 
 cordaPipeline(
     runIntegrationTests: false,
     publishOSGiImage: true,
     dailyBuildCron: 'H 03 * * *',
     publishRepoPrefix: 'engineering-tools-maven',
-    nexusAppId: 'net.corda-cli-host-0.0.1'
+    nexusAppId: 'net.corda-cli-host-0.0.1',
+    publishToMavenS3Repository: true
 )
