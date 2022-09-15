@@ -144,7 +144,7 @@ publishing {
 
         mavenCordaCLi(MavenPublication) {
             artifact cordaCLi
-            artifactId = "app"
+            artifactId = "corda-cli"
             version = project.version
         }
     }
