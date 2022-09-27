@@ -206,11 +206,17 @@ abstract class DeployableContainerBuilder extends DefaultTask {
         builder.addEnvironmentVariable('CONSOLE_LOG_LEVEL', 'info')
 
         if (System.getenv().containsKey("JENKINS_URL")) {
-            logger.quiet("*** SET ARCH *** ")  //temp
+            logger.quiet("Running on CI server - producing arm64 and amd64 images")
             Set<Platform> platformSet = new HashSet<Platform>()
             platformSet.add(new Platform("arm64", "linux"))
             platformSet.add(new Platform("amd64", "linux"))
             builder.setPlatforms(platformSet)
+        } else if (System.properties['os.arch'] == "aarch64") { 
+            logger.quiet("Detected arm64 host, switching Jib to produce arm64 images")
+            Set<Platform> platformSet = new HashSet<Platform>()
+            platformSet.add(new Platform("arm64", "linux"))
+            builder.setPlatforms(platformSet)
+            tagPrefix = "arm64-"
         }
 
         def containerName = overrideContainerName.get().empty ? projectName : overrideContainerName.get()
