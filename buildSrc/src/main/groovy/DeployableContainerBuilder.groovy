@@ -285,10 +285,10 @@ abstract class DeployableContainerBuilder extends DefaultTask {
         if (remotePublish.get()) {
             builder.containerize(
                     Containerizer.to(RegistryImage.named("${targetRepo}:${tag}")
-                            .addCredential(registryUsername.get(), registryPassword.get())).setAlwaysCacheBaseImage(true))
+                            .addCredential(registryUsername.get(), registryPassword.get())).setAlwaysCacheBaseImage(true).setEnablePlatformTags(true))
         } else {
             builder.containerize(
-                    Containerizer.to(DockerDaemonImage.named("${targetRepo}:${tag}")).setAlwaysCacheBaseImage(true)
+                    Containerizer.to(DockerDaemonImage.named("${targetRepo}:${tag}")).setAlwaysCacheBaseImage(true).setEnablePlatformTags(true)
             )
         }
 
