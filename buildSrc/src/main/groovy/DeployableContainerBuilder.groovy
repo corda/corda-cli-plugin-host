@@ -206,6 +206,7 @@ abstract class DeployableContainerBuilder extends DefaultTask {
         builder.addEnvironmentVariable('CONSOLE_LOG_LEVEL', 'info')
 
         if (System.getenv().containsKey("JENKINS_URL")) {
+            logger.quiet("*** SET ARCH *** ")  //temp
             Set<Platform> platformSet = new HashSet<Platform>()
             platformSet.add(new Platform("arm64", "linux"))
             platformSet.add(new Platform("amd64", "linux"))
