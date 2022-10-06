@@ -1,4 +1,4 @@
-@Library('corda-shared-build-pipeline-steps@5.0') _
+@Library('corda-shared-build-pipeline-steps@NOTICK/SBOM-if-condition-fix') _
 
 cordaNightlyPipeline(
     nexusAppId: 'net.corda-api-5.0',
