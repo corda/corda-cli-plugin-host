@@ -34,6 +34,11 @@ if (System.getenv("RELEASE_VERSION")?.trim()) {
 
 subprojects {
 
+ tasks.withType(AbstractArchiveTask).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+  }
+
     group = 'net.corda.cli'
     version rootProject.version
 
