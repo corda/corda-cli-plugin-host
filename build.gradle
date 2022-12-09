@@ -32,6 +32,10 @@ if (System.getenv("RELEASE_VERSION")?.trim()) {
     version = "$cliHostVersion$versionSuffix"
 }
 
+dependencyLocking {
+    lockAllConfigurations()
+}
+
 subprojects {
 
  tasks.withType(AbstractArchiveTask).configureEach {
