@@ -77,6 +77,23 @@ def cordaCLi = tasks.named('jar', Jar) {
     archiveVersion = project.version
 }
 
+tasks.register('publishBuildkitImage', BuildkitBuild) {
+    sourceTasks = Arrays.asList(cordaCLi.get())
+    dependsOn(cordaCLi)
+    overrideEntryName = 'cli'
+    containerName = 'cli'
+    arguments = Arrays.asList("-Dpf4j.pluginsDir=/opt/override/plugins")
+    if (project.hasProperty('baseImage')) {
+        baseImageName = baseImage
+    }
+    if (project.hasProperty('isNightly')) {
+        nightlyBuild = isNightly.toBoolean()
+    }
+    if (project.hasProperty('workerBaseImageTag')) {
+        baseImageTag = workerBaseImageTag
+    }
+}
+
 tasks.register('publishOSGiImage', DeployableContainerBuilder) {
     sourceTasks = Arrays.asList(cordaCLi.get())
     dependsOn(cordaCLi)
