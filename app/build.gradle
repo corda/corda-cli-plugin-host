@@ -79,7 +79,6 @@ def cordaCLi = tasks.named('jar', Jar) {
 
 // Proposed alternative to publishOSGiImage
 // Currently in trial phase, being rolled out in Nightly and locally and planned to be deployed in phases down the line
-
 tasks.register('publishBuildkitImage', BuildkitBuild) {
     sourceTasks = Arrays.asList(cordaCLi.get())
     dependsOn(cordaCLi)
@@ -94,6 +93,15 @@ tasks.register('publishBuildkitImage', BuildkitBuild) {
     }
     if (project.hasProperty('workerBaseImageTag')) {
         baseImageTag = workerBaseImageTag
+    }
+    if (project.hasProperty('useBuildx')) {
+        it.isBuildx = useBuildx.toBoolean()
+    }
+    if (project.hasProperty('tag')) {
+        it.containerTag = tag
+    }
+    if (project.hasProperty('repo')) {
+        it.containerRepo = repo
     }
 }
 
