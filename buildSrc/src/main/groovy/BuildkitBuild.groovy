@@ -12,8 +12,8 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.Optional
 import org.gradle.api.provider.ProviderFactory
-import static org.gradle.api.tasks.PathSensitivity.RELATIVE
 import org.gradle.api.Task
+import static org.gradle.api.tasks.PathSensitivity.RELATIVE
 import javax.inject.Inject
 import java.net.Socket
 import java.text.SimpleDateFormat
@@ -76,7 +76,7 @@ abstract class BuildkitBuild extends Exec {
 
     // Property for loading images into docker
     @Input
-    final Property<Boolean> useDocker = getObjects().property(Boolean).convention(false)
+    final Property<Boolean> useDockerDaemon = getObjects().property(Boolean).convention(false)
 
     // The images contain shortened filenames if true
     @Input
@@ -106,11 +106,11 @@ abstract class BuildkitBuild extends Exec {
     @Input
     final ListProperty<String> arguments = getObjects().listProperty(String)
 
-    // Tasklist to get the sourcefiles from
+    // Source Tasks to fetch the sourcefiles from
     @Input
     final ListProperty<Task> sourceTasks = getObjects().listProperty(Task)
 
-    // Files generated in the build that need to be inside the container
+    // Additional files (plugins for example) generated in the build that need to be inside the container
     @PathSensitive(RELATIVE)
     @InputFiles
     final ConfigurableFileCollection extraSourceFiles = getObjects().fileCollection()
@@ -135,18 +135,6 @@ abstract class BuildkitBuild extends Exec {
     BuildkitBuild() {
         group = 'publishing'
 
-        if (!isBuildx) {
-            try {
-                (new Socket('127.0.0.1', 3476)).close();
-                logger.info("Buildkit daemon found")
-            }
-            catch (SocketException e) {
-                throw new GradleException("No daemon found. Please connect to available buildkit daemon (and port forward it to 3476) and start again")
-            }
-        } else {
-            CheckForBuildxContainer()
-        }
-
         gitTask = project.tasks.register("gitVersionBuildkit", GetLatestGitRevision.class)
         super.dependsOn(gitTask)
 
@@ -162,21 +150,19 @@ abstract class BuildkitBuild extends Exec {
     @Override
     @TaskAction
     protected void exec() {
-
         def buildBaseDir = temporaryDir.toPath()
-        def sourceFiles = sourceTasks.get().collect { it -> it.getOutputs().files.files }.flatten() as List<File>
         def containerizationDir = Paths.get("$buildBaseDir/containerization/")
         def driverDir = Paths.get("$buildBaseDir/jdbc-driver/")
         def containerLocation = '/opt/override/'
         def driverLocation = '/opt/jdbc-driver'
-        def timeStamp = new SimpleDateFormat("ddMMyy").format(new Date())
-        String tagPrefix = ""
-        def imageRepo = []
-        def targetRepo = ""
-        def targetTags = []
-        List<String> dockerAuth = new ArrayList<String>(['docker-remotes.software.r3.com', 'corda-os-docker.software.r3.com'])
-
+        def sourceFiles = sourceTasks.get().collect { it -> it.getOutputs().files.files }.flatten() as List<File>
         String gitRevision = gitTask.flatMap { it.revision }.get().replace("\n", "")
+        def imageRepo = generateDockerTagging(gitRevision)
+        List<String> dockerAuth = new ArrayList(['docker-remotes.software.r3.com', 'corda-os-docker.software.r3.com'])
+
+        workingDir project.rootDir
+
+        checkForBuilderContainer()
 
         if (!(Files.exists(containerizationDir))) {
             logger.quiet("Created containerization dir")
@@ -200,13 +186,94 @@ abstract class BuildkitBuild extends Exec {
             }
         }
 
+        executeBuildkitCommand(containerLocation, dockerAuth, imageRepo, containerizationDir, driverDir, driverLocation)
+    }
+
+    /**
+     * helper method to build and execute the buildkit command
+     * @param containerLocation
+     * @param dockerAuth list of repositories to log into
+     * @param imageRepo list of repositories to publish to
+     * @param containerizationDir
+     * @param driverDir
+     * @param driverLocation
+     */
+    def executeBuildkitCommand(containerLocation, List<String> dockerAuth, ArrayList imageRepo, containerizationDir, driverDir, driverLocation) {
+        List<String> javaArgs = new ArrayList<String>(arguments.get())
+        javaArgs.add("-Dlog4j2.debug=\${ENABLE_LOG4J2_DEBUG:-false}")
+        javaArgs.add("-Dlog4j.configurationFile=log4j2-console.xml")
+        javaArgs.add("-Dpf4j.pluginsDir=${containerLocation + subDir.get()}")
+
+        def baseImageName = "${baseImageTag.get().empty ? baseImageName.get() : "${baseImageName.get()}:${baseImageTag.get()}"}"
+        def entryName = overrideEntryName.get().empty ? projectName : overrideEntryName.get()
+        
+        for(repo in imageRepo){
+            dockerAuth.add(repo.name)
+        }
+
+        if ((registryUsername.get() != null && !registryUsername.get().isEmpty()) && baseImageName.contains("software.r3.com")) {
+            dockerLogin(dockerAuth)
+        }
+
+        String[] baseCommand, opts, commandTail
+        List<String> imageNames
+
+        for (repo in imageRepo) {
+            imageNames = new ArrayList()
+            for (tag in repo.tag) {
+                imageNames.add("${repo.name}/corda-os-${containerName.get()}:${tag}")
+            }
+
+            if (isBuildx.get()) {
+                logger.info("\nUsing docker Buildx\n")
+                baseCommand = ['docker', 'buildx', "build", "--file ./docker/Dockerfile"]
+                opts = ["--build-arg BASE_IMAGE=${baseImageName}",
+                        "--build-arg BUILD_PATH=${containerizationDir.toString().replace("${project.rootDir}", ".")}",
+                        "--build-arg JAR_LOCATION=${containerLocation + subDir.get()}",
+                        "--build-arg JDBC_PATH=${driverDir.toString().replace("${project.rootDir}", ".")}",
+                        "--build-arg JDBC_DRIVER_LOCATION=${driverLocation}",
+                        "--build-arg IMAGE_ENTRYPOINT=\"exec java ${javaArgs.join(" ")} -jar  ${containerLocation}*${entryName}**.jar\" "]
+                commandTail = ["--${useDockerDaemon.get() ? "load" : "push"}",
+                               "-t ${imageNames.join(" -t ")}",
+                               "--cache-from ${repo.name}/corda-os-${containerName.get()}-cache",
+                               "--cache-to type=registry,ref=${repo.name}/corda-os-${containerName.get()}-cache",
+                               "."]
+            } else {
+                logger.info("\nUsing native buildkit client\n")
+                baseCommand = ['buildctl', "--addr tcp://localhost:3476", "build", "--frontend=dockerfile.v0", "--local context=/", "--local dockerfile=${project.rootDir.toString() + "/docker"}"]
+                opts = ["--opt build-arg:BASE_IMAGE=${baseImageName}",
+                        "--opt build-arg:BUILD_PATH=${containerizationDir}",
+                        "--opt build-arg:JAR_LOCATION=${containerLocation + subDir.get()}",
+                        "--opt build-arg:JDBC_PATH=${driverDir}",
+                        "--opt build-arg:JDBC_DRIVER_LOCATION=${driverLocation}",
+                        "--opt build-arg:IMAGE_ENTRYPOINT=\"exec java ${javaArgs.join(" ")} -jar  ${containerLocation}*${entryName}**.jar\" "]
+                commandTail = ["--output type=${useDockerDaemon.get() ? "docker" : "image"},\\\"name=${imageNames.join(",")}\\\"${useDockerDaemon.get() ? "" : ",push=true"}",
+                               "--export-cache type=registry,ref=${repo.name}/corda-os-${containerName.get()}-cache",
+                               "--import-cache type=registry,ref=${repo.name}/corda-os-${containerName.get()}-cache${useDockerDaemon.get() ? " | docker load" : ""}"]
+            }
+
+            String[] buildkitCommand = baseCommand + opts + commandTail
+            logger.info("${buildkitCommand.join('\n')}")
+            execShellCommand(buildkitCommand)
+        }
+    }
+
+    /**
+     * Helper method to populate tagging logic
+     * @param gitRevision short git commit hash
+     * @return imageRepo arraylist of repositories to be published and their tags
+     */
+    def generateDockerTagging(String gitRevision) {
+        def targetRepo, targetTags
+        def imageRepo = []
         if (!containerRepo.get().isEmpty()) {
             targetRepo = "${containerRepo.get()}"
             if (!containerTag.get().isEmpty()) {
                 targetTags = ["${containerTag.get()}"]
                 imageRepo.add([name: targetRepo, tag: targetTags])
             } else {
-                imageRepo.add([name: targetRepo, tag: ""])
+                targetTags = ["latest"]
+                imageRepo.add([name: targetRepo, tag: targetTags])
             }
         } else if (dockerHubPublish.get()) {
             targetRepo = "corda"
@@ -230,7 +297,7 @@ abstract class BuildkitBuild extends Exec {
             imageRepo.add([name: targetRepo, tag: targetTags])
         } else if (releaseType == 'BETA' && nightlyBuild.get()) {
             targetRepo = "corda-os-docker-nightly.software.r3.com"
-            targetTags = ["${tagPrefix}nightly", "${tagPrefix}nightly-${timeStamp}"]
+            targetTags = ["${tagPrefix}nightly", "${tagPrefix}nightly-${new SimpleDateFormat("ddMMyy").format(new Date())}"]
             imageRepo.add([name: targetRepo, tag: targetTags])
         } else if (releaseType == 'ALPHA' && nightlyBuild.get()) {
             targetRepo = "corda-os-docker-nightly.software.r3.com"
@@ -242,44 +309,62 @@ abstract class BuildkitBuild extends Exec {
             imageRepo.add([name: targetRepo, tag: targetTags])
         }
 
-        List<String> javaArgs = new ArrayList<String>(arguments.get())
-        javaArgs.add("-Dlog4j2.debug=\${ENABLE_LOG4J2_DEBUG:-false}")
+        return imageRepo
+    }
 
-        def baseImageName = "${baseImageTag.get().empty ? baseImageName.get() : "${baseImageName.get()}:${baseImageTag.get()}"}"
-        def entryName = overrideEntryName.get().empty ? projectName : overrideEntryName.get()
-
-        dockerAuth.add(targetRepo)
-
-        DockerLogin(dockerAuth)
-
-        String[] baseCommand
-        String[] opts
-        String[] commandTail
-
-        workingDir project.rootDir
-
-        for (repo in imageRepo) {
-            for (tag in repo.tag) {
-                if (isBuildx.get()) {
-                    logger.info("\nUsing docker Buildx\n")
-                    baseCommand = ['docker', 'buildx', "build", "--file ./docker/Dockerfile"]
-                    opts = ["--build-arg BASE_IMAGE=${baseImageName}", "--build-arg BUILD_PATH=${containerizationDir.toString().replace("${project.rootDir}", ".")}", "--build-arg JAR_LOCATION=${containerLocation + subDir.get()}", "--build-arg JDBC_PATH=${driverDir.toString().replace("${project.rootDir}", ".")}", "--build-arg JDBC_DRIVER_LOCATION=${driverLocation}", "--build-arg IMAGE_ENTRYPOINT=\"exec java ${javaArgs.join(" ")} -jar  ${containerLocation}*${entryName}**.jar\" "]
-                    commandTail = ["--${useDocker.get() ? "load" : "push"}", "--tag ${repo.name}/corda-os-${containerName.get()}:${tag}", "--cache-from ${repo.name}/corda-os-${containerName.get()}-cache", "--cache-to type=registry,ref=${repo.name}/corda-os-${containerName.get()}-cache", "."]
-                } else {
-                    logger.info("\nUsing native buildkit client\n")
-                    baseCommand = ['buildctl', "--addr tcp://localhost:3476", "build", "--frontend=dockerfile.v0", "--local context=/", "--local dockerfile=${project.rootDir.toString() + "/docker"}"]
-                    opts = ["--opt build-arg:BASE_IMAGE=${baseImageName}", "--opt build-arg:BUILD_PATH=${containerizationDir}", "--opt build-arg:JAR_LOCATION=${containerLocation + subDir.get()}", "--opt build-arg:JDBC_PATH=${driverDir}", "--opt build-arg:JDBC_DRIVER_LOCATION=${driverLocation}", "--opt build-arg:IMAGE_ENTRYPOINT=\"exec java ${javaArgs.join(" ")} -jar  ${containerLocation}*${entryName}**.jar\" "]
-                    commandTail = ["--output type=${useDocker.get() ? "docker" : "image"},name=${repo.name}/corda-os-${containerName.get()}:${tag}${useDocker.get() ? "" : ",push=true"}", "--export-cache type=registry,ref=${repo.name}/corda-os-${containerName.get()}-cache", "--import-cache type=registry,ref=${repo.name}/corda-os-${containerName.get()}-cache${useDocker.get() ? " | docker load" : ""}"]
-                }
-
-                String[] buildkitCommand = baseCommand + opts + commandTail
-
-                logger.info("${buildkitCommand.join('\n')}")
-
-                ExecShellCommand(buildkitCommand)
+    /**
+     * check for buildx docker container driver and create a new one if not present
+     */
+    def checkForBuilderContainer() {
+        if (isBuildx.get()) {
+            try {
+                String[] cmd = ['docker', 'buildx', 'use', 'container']
+                execShellCommand(cmd)
+            } catch (GradleException e) {
+                logger.info("no buildx container found, creating a fresh container")
+                String[] cmd = ['docker', 'buildx', 'create', '--name=container', '--driver=docker-container', '--use', '--bootstrap']
+                execShellCommand(cmd)
+            }
+        } else {
+            try {
+                (new Socket('127.0.0.1', 3476)).close();
+                logger.info("Buildkit daemon found")
+            }
+            catch (SocketException e) {
+                throw new GradleException("No daemon found. Please connect to available buildkit daemon (and port forward it to 3476) and start again")
             }
         }
+    }
 
+    /**
+     * log into docker repositories in the list
+     * @param repositoryList list of repositories to log into
+     */
+    def dockerLogin(List<String> repositoryList) {
+        for (repo in repositoryList) {
+            logger.info("Logging into ${repo}")
+            String[] cmd = ['docker', 'login', "${repo}", "-u ${registryUsername.get()}", "-p ${registryPassword.get()}"]
+            execShellCommand(cmd)
+        }
+    }
+
+    /**
+     * executes shell command
+     * @param Command command to be executed
+     */
+    def execShellCommand(String[] Command) {
+        String systemCommand
+        String systemPrefix
+        if (System.properties['os.name'].toLowerCase().contains('windows')) {
+            systemCommand = 'powershell'
+            systemPrefix = '/c'
+        } else {
+            systemCommand = 'bash'
+            systemPrefix = '-c'
+        }
+        logger.info("Executing ${Command.join(" ")}")
+        commandLine systemCommand, systemPrefix, Command.join(" ")
+        super.exec()
     }
 
     /**
@@ -317,40 +402,5 @@ abstract class BuildkitBuild extends Exec {
                     providers.provider { standardOutput.toString() }
             )
         }
-    }
-
-    //check for buildx docker container driver and create a new one if not present
-    private void CheckForBuildxContainer() {
-        try {
-            String[] cmd = ['docker', 'buildx', 'use', 'container']
-            ExecShellCommand(cmd)
-        } catch (GradleException e) {
-            logger.info("no buildx container found, creating a fresh container")
-            String[] cmd = ['docker', 'buildx', 'create', '--name=container', '--driver=docker-container', '--use', '--bootstrap']
-            ExecShellCommand(cmd)
-        }
-    }
-
-    //log into docker repositiories in the list
-    private void DockerLogin(List<String> repositoryList) {
-        for (repo in repositoryList) {
-            String[] cmd = ['docker', 'login', "${repo}", "-u ${registryUsername.get()}", "-p ${registryPassword.get()}"]
-            ExecShellCommand(cmd)
-        }
-    }
-
-    private void ExecShellCommand(String[] Command) {
-        String systemCommand
-        String systemPrefix
-        if (System.properties['os.name'].toLowerCase().contains('windows')) {
-            systemCommand = 'powershell'
-            systemPrefix = '/c'
-        } else {
-            systemCommand = 'bash'
-            systemPrefix = '-c'
-        }
-
-        commandLine systemCommand, systemPrefix, Command.join(" ")
-        super.exec()
     }
 }

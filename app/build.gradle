@@ -95,13 +95,16 @@ tasks.register('publishBuildkitImage', BuildkitBuild) {
         baseImageTag = workerBaseImageTag
     }
     if (project.hasProperty('useBuildx')) {
-        it.isBuildx = useBuildx.toBoolean()
+        isBuildx = useBuildx.toBoolean()
     }
     if (project.hasProperty('tag')) {
-        it.containerTag = tag
+        containerTag = tag
     }
     if (project.hasProperty('repo')) {
-        it.containerRepo = repo
+        containerRepo = repo
+    }
+    if (project.hasProperty('publishToDockerDaemon')) {
+        useDockerDaemon = publishToDockerDaemon.toBoolean()
     }
 }
 
