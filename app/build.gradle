@@ -97,6 +97,9 @@ tasks.register('publishBuildkitImage', BuildkitBuild) {
     if (project.hasProperty('useBuildx')) {
         isBuildx = useBuildx.toBoolean()
     }
+    if (project.hasProperty('appendTag')) {
+        appendContainerTag = appendTag
+    }
     if (project.hasProperty('tag')) {
         containerTag = tag
     }

@@ -90,6 +90,10 @@ abstract class BuildkitBuild extends Exec {
     @Input
     final Property<String> containerTag = getObjects().property(String).convention('')
 
+    // Property used to append custom image tag
+    @Input
+    final Property<String> appendContainerTag = getObjects().property(String).convention('')
+
     // Property used to set custom image name
     @Input
     final Property<String> containerName = getObjects().property(String).convention('')
@@ -221,7 +225,7 @@ abstract class BuildkitBuild extends Exec {
         for (repo in imageRepo) {
             imageNames = new ArrayList()
             for (tag in repo.tag) {
-                imageNames.add("${repo.name}/corda-os-${containerName.get()}:${tag}")
+                imageNames.add("${repo.name}/corda-os-${containerName.get()}:${tag + appendContainerTag.get()}")
             }
 
             if (isBuildx.get()) {
@@ -270,44 +274,36 @@ abstract class BuildkitBuild extends Exec {
             targetRepo = "${containerRepo.get()}"
             if (!containerTag.get().isEmpty()) {
                 targetTags = ["${containerTag.get()}"]
-                imageRepo.add([name: targetRepo, tag: targetTags])
             } else {
                 targetTags = ["latest"]
-                imageRepo.add([name: targetRepo, tag: targetTags])
             }
         } else if (dockerHubPublish.get()) {
             targetRepo = "corda"
             targetTags = ["${version}"]
-            imageRepo.add([name: targetRepo, tag: targetTags])
         } else if (preTest.get()) {
             targetRepo = "corda-os-docker-pre-test.software.r3.com"
             targetTags = ["preTest-${tagPrefix}${version}", "preTest-${tagPrefix}${gitRevision}"]
-            imageRepo.add([name: targetRepo, tag: targetTags])
         } else if (releaseType == 'RC' || releaseType == 'GA') {
             targetRepo = "corda-os-docker-stable.software.r3.com"
             targetTags = ["${tagPrefix}latest", "${tagPrefix}${version}"]
-            imageRepo.add([name: targetRepo, tag: targetTags])
         } else if (releaseType == 'BETA' && !nightlyBuild.get()) {
             targetRepo = "corda-os-docker-unstable.software.r3.com"
             targetTags = ["${tagPrefix}unstable", "${tagPrefix}${gitRevision}", "${version}"]
-            imageRepo.add([name: targetRepo, tag: targetTags])
         } else if (releaseType == 'ALPHA' && !nightlyBuild.get()) {
             targetRepo = "corda-os-docker-dev.software.r3.com"
             targetTags = ["${tagPrefix}${gitRevision}", "${version}"]
-            imageRepo.add([name: targetRepo, tag: targetTags])
         } else if (releaseType == 'BETA' && nightlyBuild.get()) {
             targetRepo = "corda-os-docker-nightly.software.r3.com"
             targetTags = ["${tagPrefix}nightly", "${tagPrefix}nightly-${new SimpleDateFormat("ddMMyy").format(new Date())}"]
-            imageRepo.add([name: targetRepo, tag: targetTags])
         } else if (releaseType == 'ALPHA' && nightlyBuild.get()) {
             targetRepo = "corda-os-docker-nightly.software.r3.com"
             targetTags = ["${tagPrefix}nightly-${version}", "${tagPrefix}nightly-${gitRevision}"]
-            imageRepo.add([name: targetRepo, tag: targetTags])
         } else {
             targetRepo = "corda-os-docker-dev.software.r3.com"
             targetTags = ["latest-local", "${version}", "${gitRevision}"]
-            imageRepo.add([name: targetRepo, tag: targetTags])
         }
+
+        imageRepo.add([name: targetRepo, tag: targetTags])
 
         return imageRepo
     }
