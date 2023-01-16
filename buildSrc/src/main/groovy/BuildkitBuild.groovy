@@ -282,22 +282,22 @@ abstract class BuildkitBuild extends Exec {
             targetTags = ["${version}"]
         } else if (preTest.get()) {
             targetRepo = "corda-os-docker-pre-test.software.r3.com"
-            targetTags = ["preTest-${tagPrefix}${version}", "preTest-${tagPrefix}${gitRevision}"]
+            targetTags = ["preTest-${version}", "preTest-${gitRevision}"]
         } else if (releaseType == 'RC' || releaseType == 'GA') {
             targetRepo = "corda-os-docker-stable.software.r3.com"
-            targetTags = ["${tagPrefix}latest", "${tagPrefix}${version}"]
+            targetTags = ["latest", "${version}"]
         } else if (releaseType == 'BETA' && !nightlyBuild.get()) {
             targetRepo = "corda-os-docker-unstable.software.r3.com"
-            targetTags = ["${tagPrefix}unstable", "${tagPrefix}${gitRevision}", "${version}"]
+            targetTags = ["unstable", "${gitRevision}", "${version}"]
         } else if (releaseType == 'ALPHA' && !nightlyBuild.get()) {
             targetRepo = "corda-os-docker-dev.software.r3.com"
-            targetTags = ["${tagPrefix}${gitRevision}", "${version}"]
+            targetTags = ["${gitRevision}", "${version}"]
         } else if (releaseType == 'BETA' && nightlyBuild.get()) {
             targetRepo = "corda-os-docker-nightly.software.r3.com"
-            targetTags = ["${tagPrefix}nightly", "${tagPrefix}nightly-${new SimpleDateFormat("ddMMyy").format(new Date())}"]
+            targetTags = ["nightly", "nightly-${new SimpleDateFormat("ddMMyy").format(new Date())}"]
         } else if (releaseType == 'ALPHA' && nightlyBuild.get()) {
             targetRepo = "corda-os-docker-nightly.software.r3.com"
-            targetTags = ["${tagPrefix}nightly-${version}", "${tagPrefix}nightly-${gitRevision}"]
+            targetTags = ["$nightly-${version}", "$nightly-${gitRevision}"]
         } else {
             targetRepo = "corda-os-docker-dev.software.r3.com"
             targetTags = ["latest-local", "${version}", "${gitRevision}"]
