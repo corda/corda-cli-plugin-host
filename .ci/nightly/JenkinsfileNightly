@@ -6,5 +6,6 @@ cordaPipeline(
     dailyBuildCron: 'H 02 * * *',
     publishOSGiImage: true,
     gradleAdditionalArgs: '-Dscan.tag.Nightly-Build',
-    generateSbom: true
+    generateSbom: true,
+    buildDockerImages: "publishBuildkitImage",
     )
