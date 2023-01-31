@@ -123,15 +123,13 @@ gradleEnterprise {
     allowUntrustedServer = false
     buildScan {
         def apiKey = settings.ext.find('CORDA_GRADLE_SCAN_KEY') ?: System.getenv('CORDA_GRADLE_SCAN_KEY')
-        accessKey = apiKey
-
         if (apiKey?.trim()) {
             publishAlways()
             capture {
                 taskInputFiles = true
             }
             uploadInBackground = false
-
+            accessKey = apiKey
         }
     }
     buildCache {
@@ -139,7 +137,7 @@ gradleEnterprise {
             enabled = true
             removeUnusedEntriesAfterDays = 14  // Garbage collect if a cache item is not used in 2 weeks.
         }
-        remote(gradleEnterprise.buildCache) {
+        remote(HttpBuildCache) {
             url = "${gradleEnterpriseUrl}/cache/"
             credentials {
                 username = settings.ext.find('BUILD_CACHE_CREDENTIALS_USR') ?: System.getenv('BUILD_CACHE_CREDENTIALS_USR')
@@ -151,7 +149,7 @@ gradleEnterprise {
                 enabled = true
             } else {
                 push = false
-                enabled = true
+                enabled = false
             }
         }
     }
