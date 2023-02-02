@@ -1,0 +1,23 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.0
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  SNYK-JAVA-ORGYAML-3152153:
+    - '*':
+        reason: >-
+          The MGM CLI plugin accepts YAML input only in order to generate a
+          group policy file. This group policy file is then separately used to
+          assemble a CPI to be uploaded to a Corda cluster. As a result, the
+          Corda platform is not exposed to this vulnerability.
+        expires: 2023-06-19T16:47:45.015Z
+        created: 2023-02-02T16:47:45.018Z
+  SNYK-JAVA-ORGJETBRAINSKOTLIN-2393744:
+    - '*':
+        reason: >-
+          This vulnerability relates to information exposure via creation of
+          temporary files via Kotlin functions with insecure permissions. Corda
+          does not use any of the vulnerable functions so it not susceptible to
+          this vulnerability.
+        expires: 2023-06-19T16:48:20.354Z
+        created: 2023-02-02T16:48:20.357Z
+patch: {}
