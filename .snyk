@@ -5,10 +5,7 @@ ignore:
   SNYK-JAVA-ORGYAML-3152153:
     - '*':
         reason: >-
-          The MGM CLI plugin accepts YAML input only in order to generate a
-          group policy file. This group policy file is then separately used to
-          assemble a CPI to be uploaded to a Corda cluster. As a result, the
-          Corda platform is not exposed to this vulnerability.
+          We are not exposed because we don’t accept yaml based input in any of the components affected.
         expires: 2023-06-19T16:47:45.015Z
         created: 2023-02-02T16:47:45.018Z
   SNYK-JAVA-ORGJETBRAINSKOTLIN-2393744:
