@@ -1,10 +1,11 @@
-@Library('corda-shared-build-pipeline-steps@5.0.1') _
+@Library('corda-shared-build-pipeline-steps@knguyen/CORE-10349/improve_slack_notification') _
 
 cordaPipeline(
     runIntegrationTests: false,
     publishOSGiImage: true,
     dailyBuildCron: 'H 03 * * *',
     publishRepoPrefix: 'engineering-tools-maven',
+    slackChannel: '#build-notification-test',
     nexusAppId: 'net.corda-cli-host-0.0.1',
     publishToMavenS3Repository: true
 )
