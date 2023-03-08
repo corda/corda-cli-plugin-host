@@ -7,5 +7,6 @@ cordaPipeline(
     publishRepoPrefix: 'engineering-tools-maven',
     nexusAppId: 'net.corda-cli-host-0.0.1',
     publishToMavenS3Repository: true,
-    javaVersion: '17'
+    javaVersion: '17',
+    enableNotifications: false
 )
