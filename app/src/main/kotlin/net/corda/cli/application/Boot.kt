@@ -40,7 +40,7 @@ object Boot {
 
     fun run(vararg args: String) {
         // Setup loggers to redirect sysOut and sysErr
-        LoggerStream.redirectSystemAndErrorOut_THIS_METHOD_WONT_EXIST()
+        LoggerStream.redirectSystemAndErrorOut()
 
         // create storage dir if it doesn't exist
         Files.cliHomeDir().mkdirs()
