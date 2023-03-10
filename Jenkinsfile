@@ -1,6 +1,6 @@
 @Library('corda-shared-build-pipeline-steps@knguyen/CORE-10349/improve_slack_notification') _
 
-cordaPipelineKubernetesAgent(
+cordaPipeline(
     runIntegrationTests: false,
     publishOSGiImage: true,
     dailyBuildCron: 'H 03 * * *',
