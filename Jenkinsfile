@@ -10,4 +10,5 @@ cordaPipeline(
     javaVersion: '17',
     enableNotifications: false,
     snykDelta: false,
+    workerBaseImageTag: '17.0.4.1'
 )
