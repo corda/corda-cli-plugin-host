@@ -8,5 +8,6 @@ cordaPipeline(
     nexusAppId: 'net.corda-cli-host-0.0.1',
     publishToMavenS3Repository: true,
     javaVersion: '17',
-    enableNotifications: false
+    enableNotifications: false,
+    snykDelta: false,
 )
