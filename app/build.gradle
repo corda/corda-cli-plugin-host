@@ -37,8 +37,10 @@ dependencies {
 version rootProject.version
 group = "net.corda.cli.host"
 
-test {
+tasks.withType(Test).configureEach {
     useJUnitPlatform()
+
+    jvmArgs '--add-opens', 'java.base/java.util=ALL-UNNAMED'
 }
 
 def appMainClass = "net.corda.cli.application.BootKt"
