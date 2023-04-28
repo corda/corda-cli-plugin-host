@@ -30,7 +30,7 @@ dependencies {
 
     api "info.picocli:picocli:${picoCliVersion}"
 
-    testImplementation "org.junit.jupiter:junit-jupiter:5.8.2"
+    testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterVersion}"
     testImplementation "com.github.stefanbirkner:system-lambda:1.2.1"
 }
 
