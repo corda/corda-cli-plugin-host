@@ -27,6 +27,7 @@ abstract class DeployableContainerBuilder extends DefaultTask {
     private static final String CONTAINER_LOCATION = "/opt/override/"
     private final String projectName = project.name
     private final String version = project.version
+    private final String cliHostVersion = project.cliHostVersion
     private String targetRepo
     private def gitTask
     private def gitLogTask
@@ -262,11 +263,11 @@ abstract class DeployableContainerBuilder extends DefaultTask {
             tagContainer(builder, "preTest-${tagPrefix}"+gitRevision)
         } else if (releaseType == 'RC' || releaseType == 'GA') {
             targetRepo = "corda-os-docker-stable.software.r3.com/corda-os-${containerName}"
-            tagContainer(builder, "${tagPrefix}latest")
+            tagContainer(builder, "${tagPrefix}latest-${cliHostVersion}")
             tagContainer(builder, "${tagPrefix}${version}")
         } else if (releaseType == 'BETA' && !nightlyBuild.get()) {
             targetRepo = "corda-os-docker-unstable.software.r3.com/corda-os-${containerName}"
-            tagContainer(builder, "${tagPrefix}unstable")
+            tagContainer(builder, "${tagPrefix}unstable-${cliHostVersion}")
             gitAndVersionTag(builder, "${tagPrefix}${gitRevision}")
         } else if (releaseType == 'ALPHA' && !nightlyBuild.get()) {
             targetRepo = "corda-os-docker-dev.software.r3.com/corda-os-${containerName}"
@@ -287,7 +288,7 @@ abstract class DeployableContainerBuilder extends DefaultTask {
             }
         } else{
             targetRepo = "corda-os-docker-dev.software.r3.com/corda-os-${containerName}"
-            tagContainer(builder, "latest-local")
+            tagContainer(builder, "latest-local-${cliHostVersion}")
             gitAndVersionTag(builder, gitRevision)
         }
     }
