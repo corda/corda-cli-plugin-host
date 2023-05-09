@@ -322,10 +322,10 @@ abstract class DeployableContainerBuilder extends DefaultTask {
         // regular git commands when the task is being executed from within CI.
         def gitBranch = ""
         if (System.getenv().containsKey(JENKINS_JOB_URL_KEY)) {
-            if (System.getenv().containsKey(JENKINS_GIT_BRANCH_KEY)) {
-                gitBranch = System.getenv(JENKINS_GIT_BRANCH_KEY)  // branch builds on jenkins
-            } else if (System.getenv().containsKey(JENKINS_CHANGE_BRANCH_KEY)) {
+            if (System.getenv().containsKey(JENKINS_CHANGE_BRANCH_KEY)) {
                 gitBranch = System.getenv(JENKINS_CHANGE_BRANCH_KEY) // PR build on jenkins
+            } else if (System.getenv().containsKey(JENKINS_GIT_BRANCH_KEY)) {
+                gitBranch = System.getenv(JENKINS_GIT_BRANCH_KEY)  // branch builds on jenkins
             }
         } else {
             gitBranch = gitBranchTask.flatMap { it.branch }.get()
