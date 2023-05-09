@@ -416,7 +416,7 @@ abstract class DeployableContainerBuilder extends DefaultTask {
         @Inject
         GetGitBranch(ObjectFactory objects, ProviderFactory providers) {
             executable 'git'
-            args 'rev-parse', '--abbrev-ref', 'HEAD'
+            args 'branch', '--show-current'
             standardOutput = new ByteArrayOutputStream()
             branch = objects.property(String).value(
                     providers.provider { standardOutput.toString().trim() }
