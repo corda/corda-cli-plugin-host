@@ -1,3 +1,9 @@
+buildscript {
+    dependencies {
+        classpath "org.apache.logging.log4j:log4j-core:$log4jVersion"
+    }
+}
+
 plugins {
     id 'org.jetbrains.kotlin.jvm'
     id 'application'
@@ -12,6 +18,7 @@ dependencies {
     implementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
     implementation "org.apache.logging.log4j:log4j-core:$log4jVersion"
     implementation "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
+    implementation "org.apache.logging.log4j:log4j-layout-template-json:$log4jVersion"
 
     // removes jacksons large libs from plugins
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
@@ -27,10 +34,15 @@ dependencies {
     implementation "org.yaml:snakeyaml:${snakeyamlVersion}"
     implementation "com.github.kittinunf.fuel:fuel:${fuelVersion}"
     implementation "com.github.kittinunf.fuel:fuel-json:${fuelVersion}"
+    constraints {
+        implementation("org.json:json:${jsonVersion}") {
+            because("Required until fuel-json updates it's internal version of org.json, not fixed as of fuel version 2.3.1")
+        }
+    }
 
     api "info.picocli:picocli:${picoCliVersion}"
 
-    testImplementation "org.junit.jupiter:junit-jupiter:5.8.2"
+    testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterVersion}"
     testImplementation "com.github.stefanbirkner:system-lambda:1.2.1"
 }
 
@@ -54,8 +66,29 @@ tasks.named("run") {
     }
 }
 
+def mergeLog4j2Plugins = tasks.register('mergeLog4j2Plugins') {
+    dependsOn configurations.runtimeClasspath
+    inputs.files(configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) })
+    def outputDir = layout.buildDirectory.dir('log4j')
+    outputs.dir(outputDir)
+
+    doLast {
+        def inputFiles = inputs.files.getFiles().findAll { it.name == 'Log4j2Plugins.dat' }.collect { it.toURI().toURL() }
+        if (inputFiles) {
+            def combinedCache = new org.apache.logging.log4j.core.config.plugins.processor.PluginCache()
+            combinedCache.loadCacheFiles(Collections.enumeration(inputFiles))
+            def outputFile = outputDir.get().file('META-INF/org/apache/logging/log4j/core/config/plugins/Log4j2Plugins.dat').asFile
+            outputFile.parentFile.mkdirs()
+            try (OutputStream out = new FileOutputStream(outputFile)) {
+                combinedCache.writeCache(out)
+            }
+        }
+    }
+}
+
 def cordaCLi = tasks.named('jar', Jar) {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    dependsOn mergeLog4j2Plugins
 
     from (sourceSets.main.output)
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } } {
@@ -65,8 +98,10 @@ def cordaCLi = tasks.named('jar', Jar) {
         exclude "META-INF/*.EC"
         exclude "META-INF/INDEX.LIST"
         exclude "META-INF/versions/*/module-info.class"
+        exclude "META-INF/org/apache/logging/log4j/core/config/plugins/Log4j2Plugins.dat"
         exclude "module-info.class"
     }
+    from(mergeLog4j2Plugins)
 
     manifest {
         attributes["Main-Class"] = appMainClass

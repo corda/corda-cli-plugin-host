@@ -2,14 +2,13 @@ package net.corda.cli.plugins.examples
 
 import org.pf4j.Extension
 import org.pf4j.Plugin
-import org.pf4j.PluginWrapper
 import net.corda.cli.api.CordaCliPlugin
 import picocli.CommandLine
 
 /**
  * An example plugin that uses class based subcommands
  */
-class ExamplePlugin(wrapper: PluginWrapper) : Plugin(wrapper) {
+class ExamplePlugin : Plugin() {
 
     override fun start() {
     }
