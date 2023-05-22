@@ -10,7 +10,7 @@ dependencies {
 
     testImplementation project(":api")
     testImplementation "org.pf4j:pf4j:${pf4jVersion}"
-    testImplementation "org.junit.jupiter:junit-jupiter:5.8.2"
+    testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterVersion}"
     testImplementation "com.github.stefanbirkner:system-lambda:1.2.1"
 }
 
