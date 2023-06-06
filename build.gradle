@@ -13,7 +13,7 @@ plugins {
     // alias libs.plugins.r3ArtifactoryPublish issue with version "1.+"
     // alias libs.plugins.gradleEnterprise must be applied to the settings (was applied to a project)
     // alias libs.plugins.gradleData
-    // alias libs.plugins.artifactory
+    alias libs.plugins.artifactory
     alias libs.plugins.snyk
     alias libs.plugins.dependencyCheck
 }
