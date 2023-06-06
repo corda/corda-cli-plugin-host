@@ -70,7 +70,7 @@ plugins {
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
-
+        mavenLocal()
         def cordaUseCache = System.getenv("CORDA_USE_CACHE")
         if (cordaUseCache != null) {
             maven {
@@ -107,6 +107,11 @@ dependencyResolutionManagement {
                     password = settings.ext.find('cordaArtifactoryPassword') ?: System.getenv('CORDA_ARTIFACTORY_PASSWORD')
                 }
             }
+        }
+    }
+    versionCatalogs {
+        libs {
+            from("corda:corda-version-catalog:1.0")
         }
     }
 }
