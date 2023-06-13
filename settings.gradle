@@ -111,8 +111,7 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         libs {
-            from("https://software.r3.com/ui/builds/corda-version-catalog/1686654359997/1686654359991/published/:corda-version-catalog:5.0.0-alpha-1686654335297")
-        }
+            from("net.corda:corda-version-catalog:1.0")        }
     }
 }
 
