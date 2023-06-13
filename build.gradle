@@ -12,14 +12,6 @@ plugins {
     id 'corda.root-publish'
     id 'io.snyk.gradle.plugin.snykplugin'
     id 'com.github.ben-manes.versions' // discover possible dependency version upgrades
-    // alias libs.plugins.kotlin apply false
-    // alias libs.plugins.detekt apply false
-    // alias libs.plugins.r3ArtifactoryPublish issue with version "1.+"
-    // alias libs.plugins.gradleEnterprise must be applied to the settings (was applied to a project)
-    // alias libs.plugins.gradleData
-    // alias libs.plugins.artifactory
-    // alias libs.plugins.snyk
-    // alias libs.plugins.dependencyCheck
 }
 
 snyk {
@@ -57,13 +49,13 @@ subprojects {
         }
 
         dependencies {
-            detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:$detektPluginVersion"
+            detektPlugins libs.detekt.formatting
         }
     }
 
     pluginManager.withPlugin('io.gitlab.arturbosch.detekt'){
         dependencies {
-            detekt "io.gitlab.arturbosch.detekt:detekt-cli:$detektPluginVersion"
+            detekt libs.detekt.cli
             constraints {
                 detekt(libs.snakeyaml) {
                     because "required until detekt plugin updates it's internal version of snakeYaml, not fixed as of detekt version 1.21"
