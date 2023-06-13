@@ -32,7 +32,7 @@ dependencies {
     implementation libs.bundles.fuel
 
     constraints {
-        implementation libs.json {
+        implementation("org.json:json:${jsonVersion}") {
             because("Required until fuel-json updates it's internal version of org.json, not fixed as of fuel version 2.3.1")
         }
     }
