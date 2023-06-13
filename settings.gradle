@@ -111,7 +111,7 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         libs {
-            from("net.corda:corda-version-catalog:1.0")
+            from("net.corda:corda-version-catalog:5.0.0-alpha-1686663098222")
         }
     }
 }
