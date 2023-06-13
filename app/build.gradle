@@ -31,14 +31,14 @@ dependencies {
     implementation libs.pf4j
     implementation libs.commons.lang3
     implementation libs.snakeyaml
-    
+    // com.github.kittinunf.fuel bundles: ["fuel", "fuel-json"]
+    implementation libs.bundles.fuel
+
     constraints {
         implementation("org.json:json:${jsonVersion}") {
             because("Required until fuel-json updates it's internal version of org.json, not fixed as of fuel version 2.3.1")
         }
     }
-    // com.github.kittinunf.fuel bundles: ["fuel", "fuel-json"]
-    implementation libs.bundles.fuel
 
     api libs.picocli
 
