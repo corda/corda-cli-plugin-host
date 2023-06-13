@@ -49,13 +49,13 @@ subprojects {
         }
 
         dependencies {
-            detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:$detektPluginVersion"
+            detektPlugins libs.detekt.formatting
         }
     }
 
     pluginManager.withPlugin('io.gitlab.arturbosch.detekt'){
         dependencies {
-            detekt "io.gitlab.arturbosch.detekt:detekt-cli:$detektPluginVersion"
+            detekt libs.detekt.cli
             constraints {
                 detekt(libs.snakeyaml) {
                     because "required until detekt plugin updates it's internal version of snakeYaml, not fixed as of detekt version 1.21"
