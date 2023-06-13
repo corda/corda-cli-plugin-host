@@ -5,13 +5,13 @@ plugins {
 dependencies {
     compileOnly project(":api")
 
-    implementation "org.pf4j:pf4j:${pf4jVersion}"
-    kapt "org.pf4j:pf4j:${pf4jVersion}"
+    implementation libs.pf4j
+    kapt libs.pf4j
 
     testImplementation project(":api")
-    testImplementation "org.pf4j:pf4j:${pf4jVersion}"
-    testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterVersion}"
-    testImplementation "com.github.stefanbirkner:system-lambda:1.2.1"
+    testImplementation libs.pf4j
+    testImplementation libs.junit.jupiter
+    testImplementation libs.system.lambda
 }
 
 test {
