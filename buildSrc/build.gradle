@@ -8,9 +8,10 @@ def constants = new Properties()
 file("$rootDir/../gradle.properties").withInputStream { InputStream input -> constants.load(input) }
 def internalPublishVersion = constants.getProperty('internalPublishVersion')
 def artifactoryContextUrl = constants.getProperty('artifactoryContextUrl')
+def jibCoreVersion = constants.getProperty('jibCoreVersion')
 
 dependencies {
-    implementation libs.jib.core
+    implementation "com.google.cloud.tools:jib-core:$jibCoreVersion"
 
     if (System.getenv('CORDA_ARTIFACTORY_USERNAME') != null || project.hasProperty('cordaArtifactoryUsername')) {
         implementation "com.r3.internal.gradle.plugins:publish:$internalPublishVersion"
