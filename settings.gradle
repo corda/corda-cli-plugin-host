@@ -59,6 +59,7 @@ pluginManagement {
         id "com.jfrog.artifactory" version artifactoryPluginVersion
         id 'io.snyk.gradle.plugin.snykplugin' version snykVersion
         id 'com.github.ben-manes.versions' version dependencyCheckVersion
+        id "org.cyclonedx.bom" version "1.7.4"
     }
 }
 
