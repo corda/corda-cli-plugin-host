@@ -25,7 +25,7 @@ dependencies {
     // removes the kafka clients large size from any plugins requiring it (topic config etc)
     implementation libs.kafka.clients
 
-    implementation libs.slf4j
+    implementation libs.slf4j.api
     implementation libs.pf4j
     implementation libs.commons.lang3
     implementation libs.snakeyaml
