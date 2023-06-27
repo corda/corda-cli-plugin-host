@@ -13,7 +13,7 @@ plugins {
 dependencies {
     implementation project(":api")
 
-    implementation libs.kotlin.stdlib
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
     implementation libs.bundles.log4j
 
