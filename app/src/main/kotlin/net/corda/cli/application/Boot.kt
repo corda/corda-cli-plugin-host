@@ -1,10 +1,8 @@
 package net.corda.cli.application
 
 import net.corda.cli.api.CordaCliPlugin
-import net.corda.cli.api.serviceUsers.HttpServiceUser
 import net.corda.cli.application.commands.SetCurrentNodeCommand
 import net.corda.cli.application.logger.LoggerStream
-import net.corda.cli.application.services.HttpRpcService
 import net.corda.cli.application.utils.Files
 import org.pf4j.CompoundPluginDescriptorFinder
 import org.pf4j.DefaultPluginManager
@@ -50,9 +48,6 @@ object Boot {
         // create storage dir if it doesn't exist
         Files.cliHomeDir().mkdirs()
 
-        // create http service
-        val httpService = HttpRpcService()
-
         // Find and load the CLI plugins
         val pluginsDir = System.getProperty("pf4j.pluginsDir", "./plugins")
         val pluginManager = PluginManager(listOf(Paths.get(pluginsDir)))
@@ -61,11 +56,6 @@ object Boot {
 
         // Retrieves the extensions for CordaCliPlugin extension point
         val cordaCliPlugins: List<CordaCliPlugin> = pluginManager.getExtensions(CordaCliPlugin::class.java)
-
-        // Extract httpServiceUsers for service injection
-        val httpServiceUsers =
-            cordaCliPlugins.filter { plugin -> plugin is HttpServiceUser }.map { plugin -> plugin as HttpServiceUser }
-        httpServiceUsers.forEach { serviceUser -> serviceUser.service = httpService }
 
         // Create the Command line app and add in the subcommands from the plugins.
         val commandLine = CommandLine(App())
