@@ -22,20 +22,10 @@ dependencies {
     implementation libs.jackson.dataformat
     implementation libs.jackson.core
 
-    // removes the kafka clients large size from any plugins requiring it (topic config etc)
-    implementation libs.kafka.clients
-
     implementation libs.slf4j.api
     implementation libs.pf4j
     implementation libs.commons.lang3
     implementation libs.snakeyaml
-    implementation libs.bundles.fuel
-
-    constraints {
-        implementation(libs.json) {
-            because("Required until fuel-json updates it's internal version of org.json, not fixed as of fuel version 2.3.1")
-        }
-    }
 
     api libs.picocli
 
