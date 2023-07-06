@@ -18,7 +18,7 @@ pluginManagement {
             }
         } else {
             maven {
-                url "${artifactoryContextUrl}/corda-releases"
+                url "${publicArtifactURL}/corda-releases"
                 content {
                     includeGroupByRegex 'net\\.corda\\.plugins(\\..*)?'
                 }
@@ -36,7 +36,6 @@ pluginManagement {
                     password = settings.ext.find('cordaArtifactoryPassword') ?: System.getenv('CORDA_ARTIFACTORY_PASSWORD')
                 }
             }
-            gradlePluginPortal()
             maven {
                 url "${artifactoryContextUrl}/engineering-tools-maven"
                 authentication {
@@ -70,7 +69,6 @@ plugins {
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
-
         def cordaUseCache = System.getenv("CORDA_USE_CACHE")
         if (cordaUseCache != null) {
             maven {
@@ -85,27 +83,8 @@ dependencyResolutionManagement {
                 }
             }
         } else {
-            mavenCentral()
-
             maven {
-                url = "$artifactoryContextUrl/corda-dependencies"
-            }
-            maven {
-                url = "$artifactoryContextUrl/${System.getenv('CORDA_CONSUME_REPOSITORY_KEY') ?: 'corda-os-maven'}"
-                credentials {
-                    username = settings.ext.find('cordaArtifactoryUsername') ?: System.getenv('CORDA_ARTIFACTORY_USERNAME')
-                    password = settings.ext.find('cordaArtifactoryPassword') ?: System.getenv('CORDA_ARTIFACTORY_PASSWORD')
-                }
-            }
-            maven {
-                url "${artifactoryContextUrl}/corda-enterprise"
-                authentication {
-                    basic(BasicAuthentication)
-                }
-                credentials {
-                    username = settings.ext.find('cordaArtifactoryUsername') ?: System.getenv('CORDA_ARTIFACTORY_USERNAME')
-                    password = settings.ext.find('cordaArtifactoryPassword') ?: System.getenv('CORDA_ARTIFACTORY_PASSWORD')
-                }
+                url = "${publicArtifactURL}/corda-dependencies"
             }
         }
     }
