@@ -18,13 +18,13 @@ pluginManagement {
             }
         } else {
             maven {
-                url "https://download.corda.net/maven/corda-dependencies"
+                url "${publicArtifactURL}/corda-releases"
                 content {
                     includeGroupByRegex 'net\\.corda\\.plugins(\\..*)?'
                 }
             }
             maven {
-                url "${publicArtifactURL}/corda-os-maven"
+                url "${artifactoryContextUrl}/corda-os-maven"
                 content {
                     includeGroupByRegex 'net\\.corda\\.cordapp(\\..*)?'
                 }
@@ -70,7 +70,6 @@ plugins {
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
-
         def cordaUseCache = System.getenv("CORDA_USE_CACHE")
         if (cordaUseCache != null) {
             maven {
@@ -85,27 +84,8 @@ dependencyResolutionManagement {
                 }
             }
         } else {
-            mavenCentral()
-
             maven {
                 url = "${publicArtifactURL}/corda-dependencies"
-            }
-            maven {
-                url = "$artifactoryContextUrl/${System.getenv('CORDA_CONSUME_REPOSITORY_KEY') ?: 'corda-os-maven'}"
-                credentials {
-                    username = settings.ext.find('cordaArtifactoryUsername') ?: System.getenv('CORDA_ARTIFACTORY_USERNAME')
-                    password = settings.ext.find('cordaArtifactoryPassword') ?: System.getenv('CORDA_ARTIFACTORY_PASSWORD')
-                }
-            }
-            maven {
-                url "${artifactoryContextUrl}/corda-enterprise"
-                authentication {
-                    basic(BasicAuthentication)
-                }
-                credentials {
-                    username = settings.ext.find('cordaArtifactoryUsername') ?: System.getenv('CORDA_ARTIFACTORY_USERNAME')
-                    password = settings.ext.find('cordaArtifactoryPassword') ?: System.getenv('CORDA_ARTIFACTORY_PASSWORD')
-                }
             }
         }
     }
