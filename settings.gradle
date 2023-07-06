@@ -18,13 +18,13 @@ pluginManagement {
             }
         } else {
             maven {
-                url "${artifactoryContextUrl}/corda-releases"
+                url "https://download.corda.net/maven/corda-dependencies"
                 content {
                     includeGroupByRegex 'net\\.corda\\.plugins(\\..*)?'
                 }
             }
             maven {
-                url "${artifactoryContextUrl}/corda-os-maven"
+                url "${publicArtifactURL}/corda-os-maven"
                 content {
                     includeGroupByRegex 'net\\.corda\\.cordapp(\\..*)?'
                 }
@@ -88,7 +88,7 @@ dependencyResolutionManagement {
             mavenCentral()
 
             maven {
-                url = "$artifactoryContextUrl/corda-dependencies"
+                url = "${publicArtifactURL}/corda-dependencies"
             }
             maven {
                 url = "$artifactoryContextUrl/${System.getenv('CORDA_CONSUME_REPOSITORY_KEY') ?: 'corda-os-maven'}"
