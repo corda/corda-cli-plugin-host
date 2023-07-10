@@ -2,13 +2,6 @@
 version: v1.25.0
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
-  SNYK-JAVA-ORGYAML-3152153:
-    - '*':
-        reason: >-
-          We are not exposed because we don’t accept yaml based input in any of
-          the components affected.
-        expires: 2023-06-19T16:00:50.968Z
-        created: 2023-02-24T16:00:50.981Z
   SNYK-JAVA-ORGJETBRAINSKOTLIN-2393744:
     - '*':
         reason: >-
@@ -16,6 +9,27 @@ ignore:
           temporary files via Kotlin functions with insecure permissions. Corda
           does not use any of the vulnerable functions so it not susceptible to
           this vulnerability.
-        expires: 2023-06-19T16:48:20.354Z
+        expires: 2023-10-10T16:48:20.354Z
         created: 2023-02-02T16:48:20.357Z
+  SNYK-JAVA-ORGXERIALSNAPPY-5710959:
+    - '*':
+        reason: >-
+          This vulnerability relates to Snappy compression for Kafka messaging. In C5 we are not using this compression
+          protocol, therefore we are not susceptible to this vulnerability.
+        expires: 2023-10-10T14:48:20.354Z
+        created: 2023-07-10T14:48:20.357Z
+  SNYK-JAVA-ORGXERIALSNAPPY-5710960:
+    - '*':
+        reason: >-
+          This vulnerability relates to Snappy compression for Kafka messaging. In C5 we are not using this compression
+          protocol, therefore we are not susceptible to this vulnerability.
+        expires: 2023-10-10T14:48:20.354Z
+        created: 2023-07-10T14:48:20.357Z
+  SNYK-JAVA-ORGXERIALSNAPPY-5710961:
+    - '*':
+        reason: >-
+          This vulnerability relates to Snappy compression for Kafka messaging. In C5 we are not using this compression
+          protocol, therefore we are not susceptible to this vulnerability.
+        expires: 2023-10-10T14:48:20.354Z
+        created: 2023-07-10T14:48:20.357Z
 patch: {}
