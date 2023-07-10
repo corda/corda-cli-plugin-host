@@ -11,25 +11,4 @@ ignore:
           this vulnerability.
         expires: 2023-10-10T16:48:20.354Z
         created: 2023-02-02T16:48:20.357Z
-  SNYK-JAVA-ORGXERIALSNAPPY-5710959:
-    - '*':
-        reason: >-
-          This vulnerability relates to Snappy compression for Kafka messaging. In C5 we are not using this compression
-          protocol, therefore we are not susceptible to this vulnerability.
-        expires: 2023-10-10T14:48:20.354Z
-        created: 2023-07-10T14:48:20.357Z
-  SNYK-JAVA-ORGXERIALSNAPPY-5710960:
-    - '*':
-        reason: >-
-          This vulnerability relates to Snappy compression for Kafka messaging. In C5 we are not using this compression
-          protocol, therefore we are not susceptible to this vulnerability.
-        expires: 2023-10-10T14:48:20.354Z
-        created: 2023-07-10T14:48:20.357Z
-  SNYK-JAVA-ORGXERIALSNAPPY-5710961:
-    - '*':
-        reason: >-
-          This vulnerability relates to Snappy compression for Kafka messaging. In C5 we are not using this compression
-          protocol, therefore we are not susceptible to this vulnerability.
-        expires: 2023-10-10T14:48:20.354Z
-        created: 2023-07-10T14:48:20.357Z
 patch: {}
