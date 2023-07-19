@@ -45,13 +45,13 @@ In the `dependencies` block, at a minimum, import the following:
 
 ```groovy
 dependencies {
-    compileOnly "org.pf4j:pf4j:$pf4jVersion"
+    compileOnly libs.pf4j
     compileOnly "net.corda.cli.host:api:$pluginHostVersion"
 
-    kapt "org.pf4j:pf4j:$pf4jVersion"
-    kapt "info.picocli:picocli:$picocliVersion"
+    kapt libs.pf4j
+    kapt libs.picocli
 
-    testImplementation "org.pf4j:pf4j:$pf4jVersion"
+    testImplementation libs.pf4j
     testCompileOnly "net.corda.cli.host:api:$pluginHostVersion"
 }
 ```

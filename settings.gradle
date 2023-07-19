@@ -86,7 +86,21 @@ dependencyResolutionManagement {
             maven {
                 url = "${publicArtifactURL}/corda-dependencies"
             }
+            maven {
+                url = "$artifactoryContextUrl/corda-os-maven"
+                authentication {
+                    basic(BasicAuthentication)
+                }
+                credentials {
+                    username = settings.ext.find('cordaArtifactoryUsername') ?: System.getenv('CORDA_ARTIFACTORY_USERNAME')
+                    password = settings.ext.find('cordaArtifactoryPassword') ?: System.getenv('CORDA_ARTIFACTORY_PASSWORD')
+                }
+            }
         }
+    }
+    versionCatalogs {
+        libs {
+            from("net.corda:$releaseVersionCatalog:$cordaVersionCatalog")        }
     }
 }
 

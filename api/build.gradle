@@ -8,6 +8,6 @@ group = "net.corda.cli.host"
 
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    compileOnly "org.pf4j:pf4j:${pf4jVersion}"
-    api "info.picocli:picocli:$picoCliVersion"
+    compileOnly libs.pf4j
+    api libs.picocli
 }
