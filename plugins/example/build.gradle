@@ -11,7 +11,7 @@ dependencies {
     testImplementation project(":api")
     testImplementation libs.pf4j
     testImplementation libs.junit.jupiter
-    testImplementation "com.github.stefanbirkner:system-lambda:1.2.1"
+    testImplementation libs.system.lambda
 }
 
 test {

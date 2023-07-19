@@ -39,7 +39,7 @@ dependencies {
     api libs.picocli
 
     testImplementation libs.junit.jupiter
-    testImplementation "com.github.stefanbirkner:system-lambda:1.2.1"
+    testImplementation libs.system.lambda
 }
 
 version rootProject.version
