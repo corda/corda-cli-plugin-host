@@ -5,5 +5,7 @@ cordaPipelineKubernetesAgent(
     dailyBuildCron: 'H 02 * * *',
     publishOSGiImage: true,
     gradleAdditionalArgs: '-Dscan.tag.Nightly-Build',
-    generateSbom: true
+    generateSbom: true,
+    javaVersion: 17,
+    workerBaseImageTag: '17.0.4.1-17.36.17'
     )
