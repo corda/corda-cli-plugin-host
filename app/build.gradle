@@ -33,7 +33,6 @@ dependencies {
     api "info.picocli:picocli:${picoCliVersion}"
 
     testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterVersion}"
-    testImplementation "uk.org.webcompere:system-stubs-core:2.0.2"
 }
 
 version rootProject.version
