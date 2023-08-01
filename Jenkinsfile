@@ -5,5 +5,6 @@ cordaPipeline(
     publishOSGiImage: true,
     dailyBuildCron: 'H 03 * * *',
     publishRepoPrefix: 'engineering-tools-maven',
-    publishToMavenS3Repository: true
+    publishToMavenS3Repository: true,
+    javaVersion: '17'
 )
