@@ -8,7 +8,11 @@ import java.util.concurrent.Callable
 import java.io.PrintWriter
 
 
-@CommandLine.Command(name = "set-node", description = ["Sets the current target for http requests."])
+@CommandLine.Command(
+    name = "set-node",
+    description = ["Sets the current target for http requests."],
+    mixinStandardHelpOptions = true
+)
 class SetCurrentNodeCommand : Callable<Int> {
 
     @CommandLine.Spec

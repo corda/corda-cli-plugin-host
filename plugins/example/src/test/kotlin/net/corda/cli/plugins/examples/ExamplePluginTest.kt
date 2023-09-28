@@ -21,12 +21,14 @@ class ExamplePluginTest {
 
         assertTrue(
             outText.contains(
-                "Usage: example-plugin [COMMAND]\n" +
+                "Usage: example-plugin [-hV] [COMMAND]\n" +
                         "Example plugin using class based subcommands\n" +
+                        "  -h, --help      Show this help message and exit.\n" +
+                        "  -V, --version   Print version information and exit.\n" +
                         "Commands:\n" +
                         "  sub-command  Example subcommand."
             )
-        )
+        ) { outText }
     }
 
     @Test

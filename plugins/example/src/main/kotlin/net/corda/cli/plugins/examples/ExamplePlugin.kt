@@ -20,7 +20,8 @@ class ExamplePlugin : Plugin() {
     @CommandLine.Command(
         name = "example-plugin",
         subcommands = [SubCommandOne::class],
-        description = ["Example plugin using class based subcommands"]
+        description = ["Example plugin using class based subcommands"],
+        mixinStandardHelpOptions = true
     )
     class ExamplePluginEntry : CordaCliPlugin
 }
