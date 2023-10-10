@@ -1,9 +1,7 @@
 package net.corda.cli.application
 
 import net.corda.cli.api.CordaCliPlugin
-import net.corda.cli.application.commands.SetCurrentNodeCommand
 import net.corda.cli.application.logger.LoggerStream
-import net.corda.cli.application.utils.Files
 import org.pf4j.CompoundPluginDescriptorFinder
 import org.pf4j.DefaultPluginManager
 import org.pf4j.ManifestPluginDescriptorFinder
@@ -17,8 +15,7 @@ fun main(vararg args: String) {
 }
 
 @CommandLine.Command(
-    name = "corda-cli",
-    subcommands = [SetCurrentNodeCommand::class]
+    name = "corda-cli"
 )
 class App {
     @CommandLine.Option(names = ["-h", "--help", "-?", "-help"], usageHelp = true, description = ["Display help and exit."])
@@ -44,9 +41,6 @@ object Boot {
     fun run(vararg args: String) {
         // Setup loggers to redirect sysOut and sysErr
         LoggerStream.redirectSystemAndErrorOut()
-
-        // create storage dir if it doesn't exist
-        Files.cliHomeDir().mkdirs()
 
         // Find and load the CLI plugins
         val pluginsDir = System.getProperty("pf4j.pluginsDir", "./plugins")
