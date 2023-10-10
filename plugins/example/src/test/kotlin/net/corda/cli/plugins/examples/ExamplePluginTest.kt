@@ -1,19 +1,49 @@
 package net.corda.cli.plugins.examples
 
-import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemErrNormalized
-import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOutNormalized
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import picocli.CommandLine
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 
 class ExamplePluginTest {
+    
+    companion object {
+        private fun tapSystemErr(function: () -> Int): String {
+            val initial = System.err
+
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            System.setErr(PrintStream(byteArrayOutputStream))
+            try {
+                function()
+            } finally {
+                System.setErr(initial)
+            }
+
+            return String(byteArrayOutputStream.toByteArray()).replace("\r\n", "\n")
+        }
+
+        private fun tapSystemOut(function: () -> Int): String {
+            val initial = System.out
+
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            System.setOut(PrintStream(byteArrayOutputStream))
+            try {
+                function()
+            } finally {
+                System.setOut(initial)
+            }
+
+            return String(byteArrayOutputStream.toByteArray()).replace("\r\n", "\n")
+        }
+    }
 
     @Test
     fun testNoOptionCommand() {
 
         val app = ExamplePlugin.ExamplePluginEntry()
 
-        val outText = tapSystemErrNormalized {
+        val outText = tapSystemErr {
             CommandLine(
                 app
             ).execute("")
@@ -35,7 +65,7 @@ class ExamplePluginTest {
     fun testSubCommand() {
 
         val app = ExamplePlugin.ExamplePluginEntry()
-        val outText = tapSystemOutNormalized {
+        val outText = tapSystemOut {
             CommandLine(
                 app
             ).execute("sub-command")
@@ -48,7 +78,7 @@ class ExamplePluginTest {
     fun testUnknownCommand() {
 
         val app = ExamplePlugin.ExamplePluginEntry()
-        val outText = tapSystemErrNormalized {
+        val outText = tapSystemErr {
             CommandLine(
                 app
             ).execute("unknown-command")
