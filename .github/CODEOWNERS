@@ -1,7 +1,1 @@
-* @corda/rest
-# Build scripts should be audited by BLT
-*.gradle           @corda/blt
-gradle.properties  @corda/corda5-team-leads
-Jenkinsfile        @corda/blt
-.ci/*              @corda/blt
-gradle/*           @corda/blt
+* @driessamyn @jasonbyrner3 @dimosr @ronanbrowne @rick-r3 @simon-johnson-r3 @blsemo @Omar-awad @aditisdesai @vinir3 @vkolomeyko @thiagoviana @Sakpal
