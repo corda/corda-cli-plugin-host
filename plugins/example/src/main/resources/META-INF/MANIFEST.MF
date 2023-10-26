@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Main-Class: net.corda.cli.application.BootKt
+Multi-Release: true
+Plugin-Name: Corda CLI
+Plugin-Version: 5.1.0-TEST
+Plugin-Provider: R3
+Plugin-Git-Commit: TEST
+
