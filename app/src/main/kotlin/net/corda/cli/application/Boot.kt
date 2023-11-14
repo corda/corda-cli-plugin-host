@@ -26,7 +26,7 @@ class App {
     @Suppress("unused")
     var help = false
 
-    @CommandLine.Option(names = ["-V", "--version"], versionHelp = true, description = ["Display version and exit"])
+    @CommandLine.Option(names = ["-V", "--version"], versionHelp = true, description = ["Display version and exit."])
     var showVersion = false
 }
 
