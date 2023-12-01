@@ -2,5 +2,5 @@
 
 windowsCompatibility(
     runIntegrationTests: false,
-    dailyBuildCron: 'H 02 * * *'
+    dailyBuildCron: '', // override to empty string to stop nightly cron
     )
