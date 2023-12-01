@@ -3,7 +3,7 @@
 cordaPipelineKubernetesAgent(
     runIntegrationTests: false,
     publishOSGiImage: true,
-    dailyBuildCron: 'H 03 * * *',
+    dailyBuildCron: '', // override to empty string to stop nightly cron
     publishRepoPrefix: 'engineering-tools-maven',
     publishToMavenS3Repository: true
 )
