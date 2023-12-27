@@ -38,6 +38,8 @@ class ExamplePluginTest {
 
             return String(byteArrayOutputStream.toByteArray()).replace("\r\n", "\n")
         }
+
+        private val colorScheme = CommandLine.Help.ColorScheme.Builder().ansi(CommandLine.Help.Ansi.OFF).build()
     }
 
     @Test
@@ -46,9 +48,9 @@ class ExamplePluginTest {
         val app = ExamplePlugin.ExamplePluginEntry()
 
         val outText = tapSystemErr {
-            CommandLine(
-                app
-            ).execute("")
+            CommandLine(app)
+                .setColorScheme(colorScheme)
+                .execute("")
         }
 
         assertTrue(
