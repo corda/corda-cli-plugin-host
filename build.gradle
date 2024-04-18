@@ -100,7 +100,6 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'maven-publish'
     apply plugin: 'org.cyclonedx.bom'
-    apply plugin: 'org.sonarqube'
 
     cyclonedxBom {
         includeConfigs = ["runtimeClasspath"]
