@@ -12,7 +12,7 @@ plugins {
     id 'io.snyk.gradle.plugin.snykplugin'
     id 'com.github.ben-manes.versions' // discover possible dependency version upgrades
     id 'org.cyclonedx.bom' apply false
-    id "org.sonarqube" version "5.0.0.4638"
+    id "org.sonarqube"
 }
 
 snyk {
