@@ -12,6 +12,7 @@ plugins {
     id 'io.snyk.gradle.plugin.snykplugin'
     id 'com.github.ben-manes.versions' // discover possible dependency version upgrades
     id 'org.cyclonedx.bom' apply false
+    id "org.sonarqube" version "5.0.0.4638"
 }
 
 snyk {
@@ -20,6 +21,14 @@ snyk {
     severity = project.findProperty("snykSeverity") ?: 'low'
     autoDownload = true
     autoUpdate = true
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "corda"
+        property "sonar.organization", "corda"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
 }
 
 ext.pluginsDir = "$buildDir/plugins"
@@ -91,6 +100,7 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'maven-publish'
     apply plugin: 'org.cyclonedx.bom'
+    apply plugin: 'org.sonarqube'
 
     cyclonedxBom {
         includeConfigs = ["runtimeClasspath"]
