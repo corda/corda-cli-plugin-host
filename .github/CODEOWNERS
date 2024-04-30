@@ -1,7 +1,9 @@
 * @corda/rest
-# Build scripts should be audited by BLT
-*.gradle           @corda/infrastructure-release
-gradle.properties  @corda/corda5-team-leads
-Jenkinsfile        @corda/infrastructure-release
-/.ci/              @corda/infrastructure-release
-/gradle/           @corda/infrastructure-release
+# Build scripts should be audited by Infrastructure & Release team
+*.gradle            @corda/infrastructure-release
+gradle.properties   @corda/corda5-team-leads
+Jenkinsfile         @corda/infrastructure-release
+/.ci/               @corda/infrastructure-release
+/.github/           @corda/infrastructure-release
+/.github/CODEOWNERS @corda/rest # keep CODEOWNERS owned by the Rest team
+/gradle/            @corda/infrastructure-release
