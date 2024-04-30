@@ -3,5 +3,5 @@
 *.gradle           @corda/infrastructure-release
 gradle.properties  @corda/corda5-team-leads
 Jenkinsfile        @corda/infrastructure-release
-.ci/*              @corda/infrastructure-release
-gradle/*           @corda/infrastructure-release
+/.ci/              @corda/infrastructure-release
+/gradle/           @corda/infrastructure-release
