@@ -1,6 +1,7 @@
 package net.corda.cli.application
 
 import net.corda.cli.api.CordaCliPlugin
+import net.corda.cli.api.AbstractCordaCliVersionProvider
 import net.corda.cli.application.logger.LoggerStream
 import org.pf4j.CompoundPluginDescriptorFinder
 import org.pf4j.DefaultPluginManager
@@ -14,13 +15,19 @@ fun main(vararg args: String) {
     Boot.run(*args)
 }
 
+class VersionProvider : AbstractCordaCliVersionProvider()
+
 @CommandLine.Command(
-    name = "corda-cli"
+    name = "corda-cli",
+    versionProvider = VersionProvider::class
 )
 class App {
     @CommandLine.Option(names = ["-h", "--help", "-?", "-help"], usageHelp = true, description = ["Display help and exit."])
     @Suppress("unused")
     var help = false
+
+    @CommandLine.Option(names = ["-V", "--version"], versionHelp = true, description = ["Display version and exit."])
+    var showVersion = false
 }
 
 /**

@@ -3,6 +3,7 @@ package net.corda.cli.plugins.examples
 import org.pf4j.Extension
 import org.pf4j.Plugin
 import net.corda.cli.api.CordaCliPlugin
+import net.corda.cli.api.AbstractCordaCliVersionProvider
 import picocli.CommandLine
 
 /**
@@ -16,12 +17,15 @@ class ExamplePlugin : Plugin() {
     override fun stop() {
     }
 
+    class VersionProvider : AbstractCordaCliVersionProvider()
+
     @Extension
     @CommandLine.Command(
         name = "example-plugin",
         subcommands = [SubCommandOne::class],
         description = ["Example plugin using class based subcommands"],
-        mixinStandardHelpOptions = true
+        mixinStandardHelpOptions = true,
+        versionProvider = VersionProvider::class
     )
     class ExamplePluginEntry : CordaCliPlugin
 }

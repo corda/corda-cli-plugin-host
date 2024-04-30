@@ -14,12 +14,16 @@ subprojects { subProject ->
 
         archiveBaseName = "plugin-${subProject.pluginId}"
 
+        var commitId = com.gradle.Utils.execAndGetStdOut "git", "rev-parse", "--verify", "HEAD"
+
         manifest {
             attributes['Plugin-Class'] = subProject.pluginClass
+            attributes["Plugin-Name"] = subProject.pluginId
             attributes['Plugin-Id'] = subProject.pluginId
             attributes['Plugin-Version'] = archiveVersion
             attributes['Plugin-Provider'] = subProject.pluginProvider
             attributes['Plugin-Description'] = subProject.pluginDescription
+            attributes["Plugin-Git-Commit"] = "$commitId"
         }
 
         from sourceSets.main.output

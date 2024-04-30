@@ -94,9 +94,15 @@ def cordaCLi = tasks.named('jar', Jar) {
     }
     from(mergeLog4j2Plugins)
 
+    var cliHostCommitId = com.gradle.Utils.execAndGetStdOut "git", "rev-parse", "--verify", "HEAD"
+
     manifest {
         attributes["Main-Class"] = appMainClass
         attributes["Multi-Release"] = true
+        attributes["Plugin-Name"] = "Corda CLI"
+        attributes["Plugin-Version"] = "${project.version}"
+        attributes["Plugin-Provider"] = "R3"
+        attributes["Plugin-Git-Commit"] = "$cliHostCommitId"
     }
 
     archiveBaseName = 'corda-cli'

@@ -1,6 +1,8 @@
 package net.corda.cli.plugins.examples
 
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import picocli.CommandLine
 import java.io.ByteArrayOutputStream
@@ -61,6 +63,18 @@ class ExamplePluginTest {
                         "  sub-command  Example subcommand."
             )
         ) { outText }
+    }
+
+    @Test
+    fun testVersionOption() {
+
+        val app = ExamplePlugin.ExamplePluginEntry()
+
+        val outText = tapSystemOut {
+            CommandLine(app).execute("--version")
+        }
+
+        assertEquals("Corda CLI 5.1.0-TEST\nProvider: R3\nCommit ID: TEST\n", outText)
     }
 
     @Test
