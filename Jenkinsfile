@@ -3,7 +3,7 @@
 cordaPipelineKubernetesAgent(
     runIntegrationTests: false,
     publishOSGiImage: true,
-    dailyBuildCron: 'H 03 * * *',
+    dailyBuildCron: '',
     publishRepoPrefix: 'engineering-tools-maven',
     publishToMavenS3Repository: true,
     javaVersion: '17'
