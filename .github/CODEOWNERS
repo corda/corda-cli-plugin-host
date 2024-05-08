@@ -1,2 +1,9 @@
-# Code freeze reviewers
-* @driessamyn @jasonbyrner3 @ronanbrowne @rick-r3 @simon-johnson-r3 @blsemo @Omar-awad @aditisdesai @vinir3 @vkolomeyko @thiagoviana @Sakpal @dickon
+* @corda/rest
+# Build scripts should be audited by Infrastructure & Release team
+*.gradle            @corda/infrastructure-release
+gradle.properties   @corda/corda5-team-leads
+Jenkinsfile         @corda/infrastructure-release
+/.ci/               @corda/infrastructure-release
+/.github/           @corda/infrastructure-release
+/.github/CODEOWNERS @corda/rest # keep CODEOWNERS owned by the Rest team
+/gradle/            @corda/infrastructure-release
