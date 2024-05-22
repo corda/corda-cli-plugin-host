@@ -13,8 +13,8 @@ These files enable you to run plugins. You can build plugins from other reposito
 
 ```
 (cd .. && git clone https://github.com/corda/corda-runtime-os.git)
-(cd ../corda-runtime-os && ./gradlew :tools:plugins:package:build  :tools:plugins:mgm:build)
-cp ../corda-runtime-os/tools/plugins/package/build/libs/package-cli-plugin-*.jar ../corda-runtime-os/tools/plugins/mgm/build/libs/mgm-cli*.jar build/plugins/
+(cd ../corda-runtime-os && ./gradlew :tools:plugins:package:build  :tools:plugins:network:build)
+cp ../corda-runtime-os/tools/plugins/package/build/libs/package-cli-plugin-*.jar ../corda-runtime-os/tools/plugins/network/build/libs/network-cli*.jar build/plugins/
 ```
 
 ## Running the CLI Script
@@ -25,10 +25,10 @@ The `build/generatedScripts` directory contains a windows cmd and shell command 
 
 ## Plugins
 
-Refer to the detailed documemntation for each plugin:
+Refer to the detailed documentation for each plugin:
 
-* [mgm plugin README.md](https://github.com/corda/corda-runtime-os/tree/release/os/5.0/tools/plugins/mgm) for generating group policy files which are required to make CPIs, which are required to run a CorDapp. 
-* [package plugin README.md](https://github.com/corda/corda-runtime-os/tree/release/os/5.0/tools/plugins/package) for generating CPB and CPI files
+* [network plugin README.md](https://github.com/corda/corda-runtime-os/tree/release/os/5.3/tools/plugins/network) for generating group policy files which are required to make CPIs, which are required to run a CorDapp. 
+* [package plugin README.md](https://github.com/corda/corda-runtime-os/tree/release/os/5.3/tools/plugins/package) for generating CPB and CPI files
 
 ### Example Plugin
 
